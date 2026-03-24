@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harita Uygulamam</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    #topbar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      font-weight: bold;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 6px 10px;
+      background: #111827;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div id="topbar">Harita Uygulamam</div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([36.621, 29.116], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    const points = [
+      {
+        name: "Nokta 1",
+        desc: "Birinci konum açıklaması",
+        lat: 36.621,
+        lng: 29.116
+      },
+      {
+        name: "Nokta 2",
+        desc: "İkinci konum açıklaması",
+        lat: 36.630,
+        lng: 29.140
+      }
+    ];
+
+    points.forEach(p => {
+      const googleMapUrl = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`;
+
+      L.marker([p.lat, p.lng]).addTo(map)
+        .bindPopup(`
+          <b>${p.name}</b><br>
+          ${p.desc}<br><br>
+          <a class="btn" href="${googleMapUrl}" target="_blank">Yol tarifi aç</a>
+        `);
+    });
+
+    const route = points.map(p => [p.lat, p.lng]);
+    L.polyline(route, { weight: 4 }).addTo(map);
+    map.fitBounds(route);
+  </script>
+</body>
+</html>
